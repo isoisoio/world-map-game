@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>World Map Game</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    html, body{
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #8fd3ff; /* 海：水色 */
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+    }
+    #map{
+      position: fixed;
+      inset: 0;
+      background: #8fd3ff;
+      cursor: default;
+    }
+
+    /* 左下パネル（小さめ） */
+    #ui-panel{
+      position: fixed;
+      left: 10px;
+      bottom: 10px;
+      width: 200px;
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(6px);
+      border-radius: 12px;
+      padding: 8px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      z-index: 5000;
+      user-select: none;
+      border: 1px solid rgba(0,0,0,0.14);
+    }
+
+    #ui-title{
+      font-size: 11px;
+      color: rgba(0,0,0,0.65);
+      margin-bottom: 4px;
+    }
+    .ui-target{
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 6px;
+      color: #111;
+      line-height: 1.2;
+    }
+    #score{
+      font-size: 16px;
+      font-weight: 950;
+      margin-bottom: 6px;
+      color: #111;
+      line-height: 1.15;
+    }
+    #status{
+      min-height: 16px;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: #111;
+    }
+
+    .ui-buttons{
+      display: flex;
+      gap: 6px;
+    }
+    .ui-buttons button{
+      flex: 1;
+      padding: 7px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    #btnNext{ background: #eaeaea; }
+    #btnRestart{ background: #111; color:#fff; }
+
+    /* 左上：ズーム(+/-) + 移動 */
+    #navBox{
+      position: fixed;
+      left: 10px;
+      top: 10px;
+      z-index: 6000;
+      display: grid;
+      grid-template-columns: repeat(3, 62px);
+      gap: 8px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(0,0,0,0.16);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+      user-select: none;
+    }
+    #navBox button{
+      background: #1e293b;
+      color: #fff;
+      width: 62px;
+      height: 54px;
+      padding: 0;
+      font-weight: 900;
+      font-size: 18px;
+      border-radius: 12px;
+    }
+    #navBox button:disabled{
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    /* START overlay */
+    #startOverlay{
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,0.22);
+      backdrop-filter: blur(2px);
+    }
+    #startCard{
+      width: min(520px, 92vw);
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 18px 55px rgba(0,0,0,0.30);
+      text-align: center;
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+    #startTitle{
+      font-size: 22px;
+      font-weight: 950;
+      margin: 0 0 8px;
+      color: #111;
+    }
+    #startDesc{
+      margin: 0 0 14px;
+      color: rgba(0,0,0,0.70);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    #btnStart{
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: none;
+      background: #111;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      min-width: 170px;
+      font-weight: 900;
+    }
+
+    /* 3,2,1 */
+    #countOverlay{
+      position: fixed;
+      inset: 0;
+      z-index: 99998;
+      display: none;
+      place-items: center;
+      background: rgba(0,0,0,0.18);
+      backdrop-filter: blur(1px);
+    }
+    #countNum{
+      font-size: 120px;
+      font-weight: 1000;
+      color: #fff;
+      text-shadow: 0 14px 40px rgba(0,0,0,0.40);
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* 結果画面 */
+    #resultOverlay{
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: none;
+      place-items: center;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(3px);
+    }
+    #resultCard{
+      width: min(560px, 92vw);
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.95);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    #resultBig{
+      font-size: 48px;
+      font-weight: 1000;
+      margin: 0 0 6px;
+      color: #111;
+    }
+    #resultRank{
+      font-size: 22px;
+      font-weight: 950;
+      margin: 0 0 10px;
+      color: #111;
+    }
+    #rankList{
+      margin: 12px 0 0;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.10);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .rankRow{
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 8px;
+      border-radius: 10px;
+    }
+    .rankRow.active{
+      background: rgba(255,191,63,0.30); /* #ffbf3f 薄 */
+      border: 1px solid rgba(0,0,0,0.10);
+      font-weight: 900;
+    }
+    #btnResultClose{
+      margin-top: 12px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: none;
+      background: #111;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+
+  <div id="navBox">
+    <button id="btnZoomOut" title="ズームアウト（戻す）">−</button>
+    <button id="btnZoomIn" title="ズームイン（アップ）">＋</button>
+    <button id="btnUp" title="上へ">↑</button>
+    <button id="btnLeft" title="左へ">←</button>
+    <button id="btnDown" title="下へ">↓</button>
+    <button id="btnRight" title="右へ">→</button>
+  </div>
+
+  <div id="startOverlay">
+    <div id="startCard">
+      <h1 id="startTitle">🌍 World Map Game</h1>
+      <p id="startDesc">START → 3,2,1 → 開始。残り5秒はカチカチ鳴ります。</p>
+      <button id="btnStart">START</button>
+    </div>
+  </div>
+
+  <div id="countOverlay">
+    <div id="countNum">3</div>
+  </div>
+
+  <div id="resultOverlay">
+    <div id="resultCard">
+      <div id="resultBig">0点</div>
+      <div id="resultRank">地理農民</div>
+
+      <div id="rankList">
+        <div class="rankRow" data-r="shogun"><span>地理将軍</span><span>132点以上</span></div>
+        <div class="rankRow" data-r="daimyo"><span>地理大名</span><span>130〜131点</span></div>
+        <div class="rankRow" data-r="ninja"><span>地理忍者</span><span>100〜129点</span></div>
+        <div class="rankRow" data-r="farmer"><span>地理農民</span><span>99点以下</span></div>
+      </div>
+
+      <button id="btnResultClose">閉じる</button>
+    </div>
+  </div>
+
+  <div id="ui-panel">
+    <div id="ui-title">この国をクリック：</div>
+    <div id="target" class="ui-target">---</div>
+    <div id="score">正解: 0　残り: 300秒</div>
+    <div id="status"></div>
+
+    <div class="ui-buttons">
+      <button id="btnNext">次の問題</button>
+      <button id="btnRestart">最初から</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+
+      /* ====== 設定 ====== */
+      const TIME_LIMIT = 200; // ✅ デフォルト 300秒
+      const DELAY_AFTER_CORRECT_MS = 220;
+      const DELAY_NEXT_BUTTON_MS  = 180;
+      const DELAY_SHOW_ANSWER_MS  = 180;
+      const DELAY_WRONG_FLASH_MS  = 150;
+
+      const PAN_STEP = 90;
+      const PAN_OPTS = { animate: true, duration: 0.35, easeLinearity: 0.25 };
+
+      const ZOOM_BASE_ADD = 0.25;
+      const ZOOM_UP_ADD_FROM_BASE = 0.5; // ✅ デフォルト +0.5
+
+      /* ====== 出題＆日本語 ====== */
+      const QUESTION_POOL = [
+        "United States of America","Canada","Mexico","Brazil","Argentina","Colombia","Peru","Venezuela","Chile",
+        "Bolivia","Paraguay","Uruguay","Cuba","Dominican Republic","Guatemala",
+        "Russia","France","Germany","Spain","Italy","United Kingdom","Poland","Ukraine","Sweden","Norway","Finland",
+        "Romania","Greece","Hungary","Serbia","Austria","Czechia","Bulgaria",
+        "Algeria","Egypt","Nigeria","Ethiopia","Democratic Republic of the Congo","South Africa","Tanzania","Kenya",
+        "Sudan","South Sudan","Morocco","Tunisia","Libya","Angola","Zambia","Zimbabwe","Mali","Niger","Chad","Botswana",
+        "Turkey","Iran","Iraq","Saudi Arabia","Syria","Israel","Jordan","Afghanistan","Kazakhstan","Uzbekistan","Turkmenistan","Azerbaijan",
+        "China","India","Japan","South Korea","North Korea","Mongolia","Pakistan","Bangladesh","Myanmar","Thailand",
+        "Vietnam","Malaysia","Indonesia","Philippines","Australia"
+      ];
+
+      const JP_NAMES = {
+        "United States of America":"アメリカ合衆国","Canada":"カナダ","Mexico":"メキシコ","Brazil":"ブラジル",
+        "Argentina":"アルゼンチン","Colombia":"コロンビア","Peru":"ペルー","Venezuela":"ベネズエラ","Chile":"チリ",
+        "Bolivia":"ボリビア","Paraguay":"パラグアイ","Uruguay":"ウルグアイ","Cuba":"キューバ","Dominican Republic":"ドミニカ共和国","Guatemala":"グアテマラ",
+        "Russia":"ロシア","France":"フランス","Germany":"ドイツ","Spain":"スペイン","Italy":"イタリア","United Kingdom":"イギリス",
+        "Poland":"ポーランド","Ukraine":"ウクライナ","Sweden":"スウェーデン","Norway":"ノルウェー","Finland":"フィンランド",
+        "Romania":"ルーマニア","Greece":"ギリシャ","Hungary":"ハンガリー","Serbia":"セルビア","Austria":"オーストリア","Czechia":"チェコ","Bulgaria":"ブルガリア",
+        "China":"中国","India":"インド","Japan":"日本","South Korea":"韓国","North Korea":"北朝鮮","Mongolia":"モンゴル",
+        "Pakistan":"パキスタン","Bangladesh":"バングラデシュ","Myanmar":"ミャンマー","Thailand":"タイ","Vietnam":"ベトナム",
+        "Malaysia":"マレーシア","Indonesia":"インドネシア","Philippines":"フィリピン","Australia":"オーストラリア",
+        "Algeria":"アルジェリア","Egypt":"エジプト","Nigeria":"ナイジェリア","Ethiopia":"エチオピア",
+        "Democratic Republic of the Congo":"コンゴ民主共和国","South Africa":"南アフリカ","Tanzania":"タンザニア","Kenya":"ケニア",
+        "Sudan":"スーダン","South Sudan":"南スーダン","Morocco":"モロッコ","Tunisia":"チュニジア","Libya":"リビア",
+        "Angola":"アンゴラ","Zambia":"ザンビア","Zimbabwe":"ジンバブエ","Mali":"マリ","Niger":"ニジェール","Chad":"チャド","Botswana":"ボツワナ",
+        "Turkey":"トルコ","Iran":"イラン","Iraq":"イラク","Saudi Arabia":"サウジアラビア","Syria":"シリア","Israel":"イスラエル",
+        "Jordan":"ヨルダン","Afghanistan":"アフガニスタン","Kazakhstan":"カザフスタン","Uzbekistan":"ウズベキスタン","Turkmenistan":"トルクメニスタン","Azerbaijan":"アゼルバイジャン"
+      };
+
+      const ALIASES = new Map([
+        ["united states", "united states of america"],
+        ["usa", "united states of america"],
+        ["russian federation", "russia"],
+        ["czech republic", "czechia"],
+        ["korea, south", "south korea"],
+        ["republic of korea", "south korea"],
+        ["korea, north", "north korea"],
+        ["dem. rep. congo", "democratic republic of the congo"],
+        ["congo (kinshasa)", "democratic republic of the congo"],
+        ["congo, dem. rep.", "democratic republic of the congo"],
+        ["tanzania, united republic of", "tanzania"],
+        ["iran, islamic republic of", "iran"],
+        ["syrian arab republic", "syria"]
+      ]);
+
+      function normName(s){
+        if (!s) return "";
+        let x = String(s).trim().toLowerCase();
+        x = x.replace(/\s+/g, " ");
+        x = x.replace(/[’'`]/g, "'");
+        x = x.replace(/&/g, "and");
+        if (ALIASES.has(x)) x = ALIASES.get(x);
+        return x;
+      }
+      function getFeatureName(feature){
+        const p = feature?.properties || {};
+        return p.name || p.ADMIN || p.NAME || p.NAME_EN || p.NAME_LONG || p.SOVEREIGNT || "";
+      }
+
+      /* ====== UI ====== */
+      const elTarget = document.getElementById("target");
+      const elStatus = document.getElementById("status");
+      const elScore  = document.getElementById("score");
+
+      const btnNext  = document.getElementById("btnNext");
+      const btnRestart = document.getElementById("btnRestart");
+
+      const btnZoomIn  = document.getElementById("btnZoomIn");
+      const btnZoomOut = document.getElementById("btnZoomOut");
+      const btnUp   = document.getElementById("btnUp");
+      const btnDown = document.getElementById("btnDown");
+      const btnLeft = document.getElementById("btnLeft");
+      const btnRight= document.getElementById("btnRight");
+
+      const startOverlay = document.getElementById("startOverlay");
+      const btnStart = document.getElementById("btnStart");
+
+      const countOverlay = document.getElementById("countOverlay");
+      const countNum = document.getElementById("countNum");
+
+      const resultOverlay = document.getElementById("resultOverlay");
+      const resultBig = document.getElementById("resultBig");
+      const resultRank = document.getElementById("resultRank");
+      const btnResultClose = document.getElementById("btnResultClose");
+
+      /* ====== 状態 ====== */
+      let target = null;
+      let targetNorm = null;
+      let answered = false;
+      let questionQueue = [];
+      let correct = 0;
+
+      let timeLeft = TIME_LIMIT;
+      let timerId = null;
+      let gameOver = false;
+      let gameStarted = false;
+
+      const layerByNormName = new Map();
+
+      function shuffle(array){
+        for (let i = array.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function updateHUD(){
+        elScore.textContent = `正解: ${correct}　残り: ${timeLeft}秒`;
+      }
+
+      /* ====== サウンド ====== */
+      let audioCtx = null;
+      let masterGain = null;
+
+      function ensureAudio(){
+        if (!audioCtx){
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioCtx();
+          masterGain = audioCtx.createGain();
+          masterGain.gain.value = 0.8;
+          masterGain.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === "suspended") audioCtx.resume();
+      }
+
+      function playTone({ type="sine", freq=880, duration=0.18, gain=0.35 } = {}){
+        ensureAudio();
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+
+        const t0 = audioCtx.currentTime;
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(t0);
+        osc.stop(t0 + duration + 0.02);
+      }
+
+      function playCorrectSound(){
+        playTone({ type:"sine", freq:980, duration:0.18, gain:0.45 });
+        setTimeout(() => playTone({ type:"sine", freq:1170, duration:0.16, gain:0.40 }), 70);
+      }
+      function playWrongSound(){
+        playTone({ type:"square", freq:170, duration:0.14, gain:0.40 });
+        setTimeout(() => playTone({ type:"square", freq:140, duration:0.14, gain:0.35 }), 80);
+      }
+      function playTimeUpSound(){
+        const seq = [880, 784, 659, 523];
+        let t = 0;
+        for (const f of seq){
+          setTimeout(() => playTone({ type:"sawtooth", freq:f, duration:0.16, gain:0.42 }), t);
+          t += 140;
+        }
+      }
+      function playTick(){
+        playTone({ type:"square", freq:2000, duration:0.05, gain:0.18 });
+      }
+
+      /* ====== ランク ====== */
+      function calcRank(score){
+        if (score >= 132) return { key:"shogun", label:"地理将軍" };
+        if (score === 130 || score === 131) return { key:"daimyo", label:"地理大名" };
+        if (score >= 100) return { key:"ninja", label:"地理忍者" };
+        return { key:"farmer", label:"地理農民" };
+      }
+
+      function showResult(){
+        const score = correct;
+        const r = calcRank(score);
+
+        resultBig.textContent = `${score}点`;
+        resultRank.textContent = r.label;
+
+        document.querySelectorAll(".rankRow").forEach(row => {
+          row.classList.toggle("active", row.dataset.r === r.key);
+        });
+
+        resultOverlay.style.display = "grid";
+      }
+
+      btnResultClose.addEventListener("click", () => {
+        resultOverlay.style.display = "none";
+      });
+
+      /* ====== タイマー ====== */
+      function stopTimer(){
+        if (timerId !== null){
+          clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      function endGame(message, reason="end"){
+        gameOver = true;
+        stopTimer();
+
+        elTarget.textContent = "⏰ 終了";
+        elStatus.textContent = message || "終了";
+        btnNext.disabled = true;
+
+        if (reason === "timeup"){
+          playTimeUpSound();
+          setTimeout(() => showResult(), 350);
+        }
+      }
+
+      function startTimer(){
+        stopTimer();
+        timeLeft = TIME_LIMIT;
+        updateHUD();
+
+        timerId = setInterval(() => {
+          if (gameOver) return;
+
+          timeLeft -= 1;
+          if (timeLeft < 0) timeLeft = 0;
+          updateHUD();
+
+          if (timeLeft <= 5 && timeLeft > 0) playTick();
+          if (timeLeft <= 0) endGame("時間切れ！", "timeup");
+        }, 1000);
+      }
+
+      /* ====== 地図 ====== */
+      const map = L.map('map', {
+        dragging: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        touchZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        zoomControl: false,
+        zoomSnap: 0.25,
+        zoomAnimation: true
+      });
+
+      map.dragging.disable();
+      map.scrollWheelZoom.disable();
+      map.doubleClickZoom.disable();
+      map.touchZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
+      map.getContainer().addEventListener('wheel', e => e.preventDefault(), { passive: false });
+
+      const BASE_STYLE = {
+        color: '#2b2b2b',
+        weight: 0.8,
+        fillColor: '#f1e2c6',
+        fillOpacity: 1
+      };
+      const HOVER_STYLE = {
+        color: '#1a1a1a',
+        weight: 1.7,
+        fillColor: '#ffbf3f', // ✅ デフォルト
+        fillOpacity: 1
+      };
+      const CORRECT_STYLE = {
+        color: '#0b3d1a',
+        weight: 1.9,
+        fillColor: '#2dd36f',
+        fillOpacity: 1
+      };
+      const WRONG_STYLE = {
+        color: '#4a0b0b',
+        weight: 1.7,
+        fillColor: '#ff4d6d',
+        fillOpacity: 1
+      };
+
+      /* 滑らか移動 */
+      btnUp.addEventListener("click",   () => map.panBy([0, -PAN_STEP], PAN_OPTS));
+      btnDown.addEventListener("click", () => map.panBy([0,  PAN_STEP], PAN_OPTS));
+      btnLeft.addEventListener("click", () => map.panBy([-PAN_STEP, 0], PAN_OPTS));
+      btnRight.addEventListener("click",() => map.panBy([ PAN_STEP, 0], PAN_OPTS));
+
+      /* ズーム2段階（滑らか） */
+      let zoomBase = null;
+      let zoomUp   = null;
+
+      function setZoomState(isUp){
+        if (zoomBase === null || zoomUp === null) return;
+        map.setZoom(isUp ? zoomUp : zoomBase, { animate:true, duration:0.35 });
+        btnZoomIn.disabled  = isUp;
+        btnZoomOut.disabled = !isUp;
+      }
+      btnZoomIn.addEventListener("click",  () => setZoomState(true));
+      btnZoomOut.addEventListener("click", () => setZoomState(false));
+
+      /* ====== ゲーム進行 ====== */
+      function pickNext(){
+        if (questionQueue.length === 0){
+          endGame("全問終了！おつかれ！", "end");
+          return;
+        }
+        target = questionQueue.pop();
+        targetNorm = normName(target);
+        answered = false;
+        elTarget.textContent = JP_NAMES[target] || target;
+        elStatus.textContent = "";
+        updateHUD();
+      }
+
+      function startGame(){
+        correct = 0;
+        answered = false;
+        gameOver = false;
+
+        btnNext.disabled = false;
+        elStatus.textContent = "";
+        resultOverlay.style.display = "none";
+
+        questionQueue = [...QUESTION_POOL];
+        shuffle(questionQueue);
+
+        startTimer();
+        pickNext();
+      }
+
+      btnNext.addEventListener("click", () => {
+        if (!gameStarted || gameOver) return;
+
+        if (!answered){
+          const lyr = layerByNormName.get(targetNorm);
+          if (lyr) lyr.setStyle(CORRECT_STYLE);
+          setTimeout(() => {
+            if (lyr) lyr.setStyle(BASE_STYLE);
+            pickNext();
+          }, DELAY_SHOW_ANSWER_MS);
+          return;
+        }
+
+        setTimeout(() => pickNext(), DELAY_NEXT_BUTTON_MS);
+      });
+
+      /* ✅ 最初から：START画面に戻る */
+      function backToStart(){
+        gameOver = true;
+        stopTimer();
+        gameStarted = false;
+
+        // 表示を初期っぽく戻す（任意）
+        elTarget.textContent = "---";
+        elStatus.textContent = "";
+        timeLeft = TIME_LIMIT;
+        correct = 0;
+        updateHUD();
+
+        // 結果画面を閉じる
+        resultOverlay.style.display = "none";
+
+        // STARTへ
+        startOverlay.style.display = "grid";
+      }
+
+      btnRestart.addEventListener("click", () => {
+        backToStart();
+      });
+
+      /* START → 3,2,1 */
+      async function runCountdown(){
+        countOverlay.style.display = "grid";
+        const seq = ["3","2","1"];
+        for (const s of seq){
+          countNum.textContent = s;
+          playTone({ type:"sine", freq: 880, duration:0.10, gain:0.25 });
+          await new Promise(r => setTimeout(r, 650));
+        }
+        countNum.textContent = "GO!";
+        playTone({ type:"sine", freq: 1170, duration:0.12, gain:0.28 });
+        await new Promise(r => setTimeout(r, 350));
+        countOverlay.style.display = "none";
+      }
+
+      btnStart.addEventListener("click", async () => {
+        ensureAudio(); // 音の自動再生対策（ユーザー操作で開始）
+        startOverlay.style.display = "none";
+        gameStarted = true;
+        await runCountdown();
+        startGame();
+      });
+
+      /* ====== GeoJSON load ====== */
+      fetch('./countries.geojson')
+        .then(r => {
+          if (!r.ok) throw new Error('countries.geojson が読めない: ' + r.status);
+          return r.json();
+        })
+        .then(data => {
+          let hoveredLayer = null;
+
+          const geoLayer = L.geoJSON(data, {
+            filter: (feature) => {
+              const name = getFeatureName(feature);
+              return name !== 'Antarctica' && name !== 'ANTARCTICA';
+            },
+            style: () => BASE_STYLE,
+            onEachFeature: (feature, lyr) => {
+              const featNorm = normName(getFeatureName(feature));
+              layerByNormName.set(featNorm, lyr);
+
+              lyr.on('mouseover', () => {
+                if (hoveredLayer && hoveredLayer !== lyr) hoveredLayer.setStyle(BASE_STYLE);
+                lyr.setStyle(HOVER_STYLE);
+                hoveredLayer = lyr;
+              });
+
+              lyr.on('mouseout', () => {
+                lyr.setStyle(BASE_STYLE);
+                if (hoveredLayer === lyr) hoveredLayer = null;
+              });
+
+              lyr.on('click', () => {
+                if (!gameStarted || gameOver) return;
+                if (!targetNorm) return;
+
+                const isCorrect = (featNorm === targetNorm);
+
+                if (isCorrect){
+                  answered = true;
+                  playCorrectSound();
+                  lyr.setStyle(CORRECT_STYLE);
+
+                  correct += 1;
+                  elStatus.textContent = "✅ 正解！";
+                  updateHUD();
+
+                  setTimeout(() => {
+                    lyr.setStyle(BASE_STYLE);
+                    pickNext();
+                  }, DELAY_AFTER_CORRECT_MS);
+
+                } else {
+                  playWrongSound();
+                  elStatus.textContent = "❌ ちがう";
+                  lyr.setStyle(WRONG_STYLE);
+                  setTimeout(() => lyr.setStyle(BASE_STYLE), DELAY_WRONG_FLASH_MS);
+                }
+              });
+            }
+          }).addTo(map);
+
+          const bounds = geoLayer.getBounds();
+          map.fitBounds(bounds, { padding:[18,18], animate:false });
+
+          const fitZoom = map.getZoom();
+          zoomBase = fitZoom + ZOOM_BASE_ADD;
+          zoomUp   = zoomBase + ZOOM_UP_ADD_FROM_BASE;
+
+          map.setMinZoom(zoomBase);
+          map.setMaxZoom(zoomUp);
+          setZoomState(false);
+
+          map.setMaxBounds(bounds);
+          map.options.maxBoundsViscosity = 1.0;
+
+          // 初期表示
+          updateHUD();
+        })
+        .catch(err => {
+          alert(err.message);
+          console.error(err);
+        });
+
+    });
+  </script>
+</body>
+</html>
+
+
+
+
