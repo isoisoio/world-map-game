@@ -13,22 +13,22 @@
       margin: 0;
       height: 100%;
       overflow: hidden;
-      background: #8fd3ff; /* 海：水色 */
+      background: #4ad2e4;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
     }
     #map{
       position: fixed;
       inset: 0;
-      background: #8fd3ff;
+      background: #0474f5;
       cursor: default;
     }
 
-    /* 左下パネル（小さめ） */
+    /* 左下パネル */
     #ui-panel{
       position: fixed;
       left: 10px;
       bottom: 10px;
-      width: 200px;
+      width: 230px;
       background: rgba(255,255,255,0.65);
       backdrop-filter: blur(6px);
       border-radius: 12px;
@@ -38,23 +38,22 @@
       user-select: none;
       border: 1px solid rgba(0,0,0,0.14);
     }
-
     #ui-title{
       font-size: 11px;
       color: rgba(0,0,0,0.65);
       margin-bottom: 4px;
     }
     .ui-target{
-      font-size: 14px;
-      font-weight: 900;
+      font-size: 20px;
+      font-weight: 950;
       margin-bottom: 6px;
       color: #111;
       line-height: 1.2;
     }
     #score{
       font-size: 16px;
-      font-weight: 950;
-      margin-bottom: 6px;
+      font-weight: 900;
+      margin-bottom: 3px;
       color: #111;
       line-height: 1.15;
     }
@@ -64,7 +63,6 @@
       margin-bottom: 6px;
       color: #111;
     }
-
     .ui-buttons{
       display: flex;
       gap: 6px;
@@ -77,10 +75,9 @@
       cursor: pointer;
       font-size: 12px;
     }
-    #btnNext{ background: #eaeaea; }
     #btnRestart{ background: #111; color:#fff; }
 
-    /* 左上：ズーム(+/-) + 移動 */
+    /* 左上：ズーム + 移動 */
     #navBox{
       position: fixed;
       left: 10px;
@@ -105,6 +102,16 @@
       font-weight: 900;
       font-size: 18px;
       border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      line-height: 1;
+    }
+    #navBox button small{
+      display:block;
+      font-size: 11px;
+      font-weight: 900;
+      opacity: .85;
+      margin-top: 3px;
     }
     #navBox button:disabled{
       opacity: .35;
@@ -116,42 +123,133 @@
       position: fixed;
       inset: 0;
       z-index: 99999;
-      display: grid;
-      place-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 15px;
       background: rgba(0,0,0,0.22);
       backdrop-filter: blur(2px);
     }
+
     #startCard{
-      width: min(520px, 92vw);
-      padding: 18px 18px 16px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 18px 55px rgba(0,0,0,0.30);
+      position: relative;
+      width: min(560px, 94vw);
+      padding: 26px 22px 20px;
+      border-radius: 90px;
+      background: white;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
       text-align: center;
-      border: 1px solid rgba(0,0,0,0.12);
+      z-index: 2;
+      pointer-events: auto;
+
+      /* ✅ 相似的に縮小 */
+      transform: scale(0.95);
+      transform-origin: top center;
     }
+    #startCard::after{
+      content: "";
+      position: absolute;
+      bottom: -33px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 22px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 35px solid white;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
+    }
+
     #startTitle{
-      font-size: 22px;
+      font-size: 30px;
       font-weight: 950;
       margin: 0 0 8px;
       color: #111;
     }
-    #startDesc{
-      margin: 0 0 14px;
-      color: rgba(0,0,0,0.70);
-      font-size: 14px;
-      line-height: 1.55;
-    }
-    #btnStart{
-      padding: 12px 18px;
-      border-radius: 14px;
-      border: none;
-      background: #111;
-      color: #fff;
+    .startLine1{
       font-size: 16px;
-      cursor: pointer;
-      min-width: 170px;
       font-weight: 900;
+      margin: 0 0 6px;
+      color: #333;
+    }
+
+    .modeStack{
+      display: grid;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .modeBtn{
+      border: 1px solid rgba(0,0,0,0.14);
+      background: rgba(0,0,0,0.06);
+      border-radius: 18px;
+      padding: 12px 12px;
+      cursor: pointer;
+      font-weight: 950;
+      font-size: 15px;
+      color: #111;
+      user-select: none;
+      transition: transform 90ms ease, filter 90ms ease, background 120ms ease, border-color 120ms ease;
+    }
+    .modeBtn small{
+      display:block;
+      font-size: 11px;
+      font-weight: 750;
+      color: rgba(0,0,0,0.65);
+      margin-top: 3px;
+    }
+    .modeBtn:hover{
+      background: rgba(0,0,0,0.14);
+      border-color: rgba(0,0,0,0.28);
+      filter: brightness(1.02);
+    }
+    .modeBtn:active{
+      transform: translateY(2px);
+      filter: brightness(0.98);
+    }
+
+    .levelRow{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .levelCell{
+      display: grid;
+      gap: 6px;
+      justify-items: stretch;
+    }
+
+    .practiceBtn{
+      justify-self: center;
+      width: 92%;
+      padding: 7px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.14);
+      background: rgba(0,0,0,0.05);
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(0,0,0,0.85);
+      transition: transform 90ms ease, filter 90ms ease, background 120ms ease, border-color 120ms ease;
+    }
+    .practiceBtn:hover{
+      background: rgba(0,0,0,0.13);
+      border-color: rgba(0,0,0,0.28);
+    }
+    .practiceBtn:active{
+      transform: translateY(2px);
+      filter: brightness(0.98);
+    }
+
+    #startBird{
+      position: absolute;
+      left: 50%;
+      bottom: 0px;
+      transform: translateX(-50%);
+      width: 550px;
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* 3,2,1 */
@@ -190,12 +288,14 @@
       background: rgba(255,255,255,0.95);
       box-shadow: 0 18px 60px rgba(0,0,0,0.45);
       border: 1px solid rgba(0,0,0,0.15);
+      text-align: center;
     }
     #resultBig{
       font-size: 48px;
       font-weight: 1000;
       margin: 0 0 6px;
       color: #111;
+      letter-spacing: 0.02em;
     }
     #resultRank{
       font-size: 22px;
@@ -203,7 +303,23 @@
       margin: 0 0 10px;
       color: #111;
     }
+    #resultBody{
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    #resultBird{
+      width: 170px;
+      height: auto;
+      align-self: center;
+      flex: 0 0 auto;
+      pointer-events: none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
+    }
     #rankList{
+      flex: 1 1 auto;
       margin: 12px 0 0;
       padding: 12px;
       border-radius: 14px;
@@ -211,6 +327,7 @@
       border: 1px solid rgba(0,0,0,0.10);
       font-size: 14px;
       line-height: 1.55;
+      text-align: left;
     }
     .rankRow{
       display:flex;
@@ -220,7 +337,7 @@
       border-radius: 10px;
     }
     .rankRow.active{
-      background: rgba(255,191,63,0.30); /* #ffbf3f 薄 */
+      background: rgba(255,191,63,0.30);
       border: 1px solid rgba(0,0,0,0.10);
       font-weight: 900;
     }
@@ -236,15 +353,27 @@
       font-weight: 900;
       cursor: pointer;
     }
+
+    #danceBird{
+      position: fixed;
+      left: 5px;
+      bottom: 118px;
+      width: 120px;
+      z-index: 4000;
+      pointer-events: none;
+      display: none;
+      transform-origin: bottom center;
+    }
   </style>
 </head>
 
 <body>
   <div id="map"></div>
+  <img id="danceBird" src="bird1.png" alt="dance bird" />
 
   <div id="navBox">
-    <button id="btnZoomOut" title="ズームアウト（戻す）">−</button>
-    <button id="btnZoomIn" title="ズームイン（アップ）">＋</button>
+    <button id="btnZoomOut" title="Enterで切替（ズームアウト）">− <small>Enter</small></button>
+    <button id="btnZoomIn" title="Enterで切替（ズームイン）">＋ <small>Enter</small></button>
     <button id="btnUp" title="上へ">↑</button>
     <button id="btnLeft" title="左へ">←</button>
     <button id="btnDown" title="下へ">↓</button>
@@ -252,27 +381,66 @@
   </div>
 
   <div id="startOverlay">
+    <img id="startBird" src="bird9.png" alt="bird" />
     <div id="startCard">
-      <h1 id="startTitle">🌍 World Map Game</h1>
-      <p id="startDesc">START → 3,2,1 → 開始。残り5秒はカチカチ鳴ります。</p>
-      <button id="btnStart">START</button>
+      <h1 id="startTitle">世界地図ゲーム</h1>
+      <p class="startLine1">全世界の地理オタクへ</p>
+
+      <div class="modeStack">
+        <button class="modeBtn" data-mode="all" data-practice="0">
+          総合問題
+          <small>全130か国</small>
+        </button>
+
+        <div class="levelRow">
+          <div class="levelCell">
+            <button class="modeBtn" data-mode="beginner" data-practice="0">
+              初級
+              <small>40か国</small>
+            </button>
+            <button class="practiceBtn" data-mode="beginner" data-practice="1">練習（初級）</button>
+          </div>
+
+          <div class="levelCell">
+            <button class="modeBtn" data-mode="intermediate" data-practice="0">
+              中級
+              <small>40か国</small>
+            </button>
+            <button class="practiceBtn" data-mode="intermediate" data-practice="1">練習（中級）</button>
+          </div>
+
+          <div class="levelCell">
+            <button class="modeBtn" data-mode="advanced" data-practice="0">
+              上級
+              <small>50か国</small>
+            </button>
+            <button class="practiceBtn" data-mode="advanced" data-practice="1">練習（上級）</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div id="countOverlay">
-    <div id="countNum">3</div>
-  </div>
+  <div id="countOverlay"><div id="countNum">3</div></div>
 
   <div id="resultOverlay">
     <div id="resultCard">
       <div id="resultBig">0点</div>
-      <div id="resultRank">地理農民</div>
+      <div id="resultRank">---</div>
 
-      <div id="rankList">
-        <div class="rankRow" data-r="shogun"><span>地理将軍</span><span>132点以上</span></div>
-        <div class="rankRow" data-r="daimyo"><span>地理大名</span><span>130〜131点</span></div>
-        <div class="rankRow" data-r="ninja"><span>地理忍者</span><span>100〜129点</span></div>
-        <div class="rankRow" data-r="farmer"><span>地理農民</span><span>99点以下</span></div>
+      <div id="resultBody">
+        <img id="resultBird" src="bird1.png" alt="rank bird" />
+        <!-- ✅ 総合はこの表（初期HTML）をそのまま使う。初/中/上はJSで差し替え -->
+        <div id="rankList">
+          <div class="rankRow" data-r="eggSoldier"><span>たまご兵</span><span>0〜14点</span></div>
+          <div class="rankRow" data-r="eggWarrior"><span>たまご戦士</span><span>15〜29点</span></div>
+          <div class="rankRow" data-r="chickSergeant"><span>ひよこ軍曹</span><span>30〜59点</span></div>
+          <div class="rankRow" data-r="chickenColonel"><span>にわとり大佐</span><span>60〜89点</span></div>
+          <div class="rankRow" data-r="falconLtGen"><span>ハヤブサ中将</span><span>90〜109点</span></div>
+          <div class="rankRow" data-r="gryphonGeneral"><span>グリフォン大将</span><span>110〜124点</span></div>
+          <div class="rankRow" data-r="thunderbird"><span>サンダーバード</span><span>125〜129点</span></div>
+          <div class="rankRow" data-r="phoenix"><span>フェニックス</span><span>130点</span></div>
+        </div>
       </div>
 
       <button id="btnResultClose">閉じる</button>
@@ -282,147 +450,65 @@
   <div id="ui-panel">
     <div id="ui-title">この国をクリック：</div>
     <div id="target" class="ui-target">---</div>
-    <div id="score">正解: 0　残り: 300秒</div>
+    <div id="score">正解: 0　残り: 200秒</div>
     <div id="status"></div>
 
     <div class="ui-buttons">
-      <button id="btnNext">次の問題</button>
       <button id="btnRestart">最初から</button>
     </div>
   </div>
 
   <script>
-    window.addEventListener("DOMContentLoaded", () => {
+    const DANCE_BIRD_SRC = "bird1.png";
 
-      /* ====== 設定 ====== */
-      const TIME_LIMIT = 200; // ✅ デフォルト 300秒
+    window.addEventListener("DOMContentLoaded", () => {
+      // ====== モード別制限時間（総合は変えない） ======
+      const TIME_LIMIT_BY_MODE = {
+        all: 200,           // ←総合は今のまま
+        beginner: 60,
+        intermediate: 60,
+        advanced: 80
+      };
+      function getTimeLimit(mode){
+        return TIME_LIMIT_BY_MODE[mode] ?? 200;
+      }
+
       const DELAY_AFTER_CORRECT_MS = 220;
-      const DELAY_NEXT_BUTTON_MS  = 180;
-      const DELAY_SHOW_ANSWER_MS  = 180;
-      const DELAY_WRONG_FLASH_MS  = 150;
+      const FLASH_ON_MS = 250;
+      const FLASH_OFF_MS = 70;
+      const AFTER_WRONG_ADVANCE_MS = 60;
+      const MODE_TO_COUNTDOWN_MS = 180;
 
       const PAN_STEP = 90;
       const PAN_OPTS = { animate: true, duration: 0.35, easeLinearity: 0.25 };
-
       const ZOOM_BASE_ADD = 0.25;
-      const ZOOM_UP_ADD_FROM_BASE = 0.5; // ✅ デフォルト +0.5
+      const ZOOM_UP_ADD_FROM_BASE = 0.5;
 
-      /* ====== 出題＆日本語 ====== */
-      const QUESTION_POOL = [
-        "United States of America","Canada","Mexico","Brazil","Argentina","Colombia","Peru","Venezuela","Chile",
-        "Bolivia","Paraguay","Uruguay","Cuba","Dominican Republic","Guatemala",
-        "Russia","France","Germany","Spain","Italy","United Kingdom","Poland","Ukraine","Sweden","Norway","Finland",
-        "Romania","Greece","Hungary","Serbia","Austria","Czechia","Bulgaria",
-        "Algeria","Egypt","Nigeria","Ethiopia","Democratic Republic of the Congo","South Africa","Tanzania","Kenya",
-        "Sudan","South Sudan","Morocco","Tunisia","Libya","Angola","Zambia","Zimbabwe","Mali","Niger","Chad","Botswana",
-        "Turkey","Iran","Iraq","Saudi Arabia","Syria","Israel","Jordan","Afghanistan","Kazakhstan","Uzbekistan","Turkmenistan","Azerbaijan",
-        "China","India","Japan","South Korea","North Korea","Mongolia","Pakistan","Bangladesh","Myanmar","Thailand",
-        "Vietnam","Malaysia","Indonesia","Philippines","Australia"
-      ];
-
-      const JP_NAMES = {
-        "United States of America":"アメリカ合衆国","Canada":"カナダ","Mexico":"メキシコ","Brazil":"ブラジル",
-        "Argentina":"アルゼンチン","Colombia":"コロンビア","Peru":"ペルー","Venezuela":"ベネズエラ","Chile":"チリ",
-        "Bolivia":"ボリビア","Paraguay":"パラグアイ","Uruguay":"ウルグアイ","Cuba":"キューバ","Dominican Republic":"ドミニカ共和国","Guatemala":"グアテマラ",
-        "Russia":"ロシア","France":"フランス","Germany":"ドイツ","Spain":"スペイン","Italy":"イタリア","United Kingdom":"イギリス",
-        "Poland":"ポーランド","Ukraine":"ウクライナ","Sweden":"スウェーデン","Norway":"ノルウェー","Finland":"フィンランド",
-        "Romania":"ルーマニア","Greece":"ギリシャ","Hungary":"ハンガリー","Serbia":"セルビア","Austria":"オーストリア","Czechia":"チェコ","Bulgaria":"ブルガリア",
-        "China":"中国","India":"インド","Japan":"日本","South Korea":"韓国","North Korea":"北朝鮮","Mongolia":"モンゴル",
-        "Pakistan":"パキスタン","Bangladesh":"バングラデシュ","Myanmar":"ミャンマー","Thailand":"タイ","Vietnam":"ベトナム",
-        "Malaysia":"マレーシア","Indonesia":"インドネシア","Philippines":"フィリピン","Australia":"オーストラリア",
-        "Algeria":"アルジェリア","Egypt":"エジプト","Nigeria":"ナイジェリア","Ethiopia":"エチオピア",
-        "Democratic Republic of the Congo":"コンゴ民主共和国","South Africa":"南アフリカ","Tanzania":"タンザニア","Kenya":"ケニア",
-        "Sudan":"スーダン","South Sudan":"南スーダン","Morocco":"モロッコ","Tunisia":"チュニジア","Libya":"リビア",
-        "Angola":"アンゴラ","Zambia":"ザンビア","Zimbabwe":"ジンバブエ","Mali":"マリ","Niger":"ニジェール","Chad":"チャド","Botswana":"ボツワナ",
-        "Turkey":"トルコ","Iran":"イラン","Iraq":"イラク","Saudi Arabia":"サウジアラビア","Syria":"シリア","Israel":"イスラエル",
-        "Jordan":"ヨルダン","Afghanistan":"アフガニスタン","Kazakhstan":"カザフスタン","Uzbekistan":"ウズベキスタン","Turkmenistan":"トルクメニスタン","Azerbaijan":"アゼルバイジャン"
-      };
-
-      const ALIASES = new Map([
-        ["united states", "united states of america"],
-        ["usa", "united states of america"],
-        ["russian federation", "russia"],
-        ["czech republic", "czechia"],
-        ["korea, south", "south korea"],
-        ["republic of korea", "south korea"],
-        ["korea, north", "north korea"],
-        ["dem. rep. congo", "democratic republic of the congo"],
-        ["congo (kinshasa)", "democratic republic of the congo"],
-        ["congo, dem. rep.", "democratic republic of the congo"],
-        ["tanzania, united republic of", "tanzania"],
-        ["iran, islamic republic of", "iran"],
-        ["syrian arab republic", "syria"]
-      ]);
-
-      function normName(s){
-        if (!s) return "";
-        let x = String(s).trim().toLowerCase();
-        x = x.replace(/\s+/g, " ");
-        x = x.replace(/[’'`]/g, "'");
-        x = x.replace(/&/g, "and");
-        if (ALIASES.has(x)) x = ALIASES.get(x);
-        return x;
-      }
-      function getFeatureName(feature){
-        const p = feature?.properties || {};
-        return p.name || p.ADMIN || p.NAME || p.NAME_EN || p.NAME_LONG || p.SOVEREIGNT || "";
+      /* ボタン音 */
+      const btnSfx = new Audio("ボタン音.mp3");
+      btnSfx.preload = "auto";
+      btnSfx.volume = 0.9;
+      function playButtonSound(){
+        try{ btnSfx.currentTime = 0; btnSfx.play().catch(() => {}); }catch(e){}
       }
 
-      /* ====== UI ====== */
-      const elTarget = document.getElementById("target");
-      const elStatus = document.getElementById("status");
-      const elScore  = document.getElementById("score");
-
-      const btnNext  = document.getElementById("btnNext");
-      const btnRestart = document.getElementById("btnRestart");
-
-      const btnZoomIn  = document.getElementById("btnZoomIn");
-      const btnZoomOut = document.getElementById("btnZoomOut");
-      const btnUp   = document.getElementById("btnUp");
-      const btnDown = document.getElementById("btnDown");
-      const btnLeft = document.getElementById("btnLeft");
-      const btnRight= document.getElementById("btnRight");
-
-      const startOverlay = document.getElementById("startOverlay");
-      const btnStart = document.getElementById("btnStart");
-
-      const countOverlay = document.getElementById("countOverlay");
-      const countNum = document.getElementById("countNum");
-
-      const resultOverlay = document.getElementById("resultOverlay");
-      const resultBig = document.getElementById("resultBig");
-      const resultRank = document.getElementById("resultRank");
-      const btnResultClose = document.getElementById("btnResultClose");
-
-      /* ====== 状態 ====== */
-      let target = null;
-      let targetNorm = null;
-      let answered = false;
-      let questionQueue = [];
-      let correct = 0;
-
-      let timeLeft = TIME_LIMIT;
-      let timerId = null;
-      let gameOver = false;
-      let gameStarted = false;
-
-      const layerByNormName = new Map();
-
-      function shuffle(array){
-        for (let i = array.length - 1; i > 0; i--){
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-        }
+      /* BGM（仮） */
+      const bgm = new Audio("ハッピージェネレーション.mp3");
+      bgm.loop = false;
+      bgm.preload = "auto";
+      bgm.volume = 0.45;
+      function startBGM(){
+        try{ bgm.currentTime = 0; }catch(e){}
+        bgm.play().catch(()=>{});
+      }
+      function stopBGM(){
+        bgm.pause();
+        try{ bgm.currentTime = 0; }catch(e){}
       }
 
-      function updateHUD(){
-        elScore.textContent = `正解: ${correct}　残り: ${timeLeft}秒`;
-      }
-
-      /* ====== サウンド ====== */
+      /* 効果音（GO/正解/タイムアップ） */
       let audioCtx = null;
       let masterGain = null;
-
       function ensureAudio(){
         if (!audioCtx){
           const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -433,7 +519,6 @@
         }
         if (audioCtx.state === "suspended") audioCtx.resume();
       }
-
       function playTone({ type="sine", freq=880, duration=0.18, gain=0.35 } = {}){
         ensureAudio();
         const osc = audioCtx.createOscillator();
@@ -451,14 +536,9 @@
         osc.start(t0);
         osc.stop(t0 + duration + 0.02);
       }
-
       function playCorrectSound(){
-        playTone({ type:"sine", freq:980, duration:0.18, gain:0.45 });
-        setTimeout(() => playTone({ type:"sine", freq:1170, duration:0.16, gain:0.40 }), 70);
-      }
-      function playWrongSound(){
-        playTone({ type:"square", freq:170, duration:0.14, gain:0.40 });
-        setTimeout(() => playTone({ type:"square", freq:140, duration:0.14, gain:0.35 }), 80);
+        playTone({ type:"sine", freq:980, duration:0.18, gain:0.65 });
+        setTimeout(() => playTone({ type:"sine", freq:1170, duration:0.16, gain:0.60 }), 70);
       }
       function playTimeUpSound(){
         const seq = [880, 784, 659, 523];
@@ -472,33 +552,312 @@
         playTone({ type:"square", freq:2000, duration:0.05, gain:0.18 });
       }
 
-      /* ====== ランク ====== */
-      function calcRank(score){
-        if (score >= 132) return { key:"shogun", label:"地理将軍" };
-        if (score === 130 || score === 131) return { key:"daimyo", label:"地理大名" };
-        if (score >= 100) return { key:"ninja", label:"地理忍者" };
-        return { key:"farmer", label:"地理農民" };
+      /* 国プール */
+      const QUESTION_POOL_ALL = [
+        "United States of America","Canada","Mexico","Brazil","Argentina","Colombia","Peru","Venezuela","Chile",
+        "Bolivia","Paraguay","Uruguay","Cuba","Dominican Republic","Guatemala",
+        "Russia","France","Germany","Spain","Italy","United Kingdom","Poland","Ukraine","Sweden","Norway","Finland",
+        "Romania","Greece","Hungary","Serbia","Austria","Czechia","Bulgaria",
+        "Algeria","Egypt","Nigeria","Ethiopia","Democratic Republic of the Congo","South Africa","Tanzania","Kenya",
+        "Sudan","South Sudan","Morocco","Tunisia","Libya","Angola","Zambia","Zimbabwe","Mali","Niger","Chad","Botswana",
+        "Turkey","Iran","Iraq","Saudi Arabia","Syria","Israel","Jordan","Afghanistan","Kazakhstan","Uzbekistan","Turkmenistan","Azerbaijan",
+        "China","India","Japan","South Korea","North Korea","Mongolia","Pakistan","Bangladesh","Myanmar","Thailand",
+        "Vietnam","Malaysia","Indonesia","Philippines","Australia","Panama","Costa Rica","Honduras","Guyana","Suriname","Ecuador",
+        "Portugal","Netherlands","Belgium","Switzerland","Denmark",
+        "Ireland","Iceland","Croatia","Slovakia",
+        "Bosnia and Herzegovina","North Macedonia","Albania",
+        "Lithuania","Latvia","Estonia","Belarus","Moldova",
+        "Ghana","Senegal","Guinea","Sierra Leone","Liberia",
+        "Côte d'Ivoire","Benin","Burkina Faso",
+        "Cameroon","Central African Republic",
+        "Republic of the Congo","Gabon","Djibouti",
+        "Malawi","Mozambique","Madagascar","Somalia",
+        "United Arab Emirates","Oman","Yemen",
+        "Armenia","Georgia","Kyrgyzstan",
+        "Nepal","Sri Lanka","Papua New Guinea","New Zealand"
+      ];
+
+      const QUESTION_POOL_BEGINNER = [
+        "United States of America","Canada","Mexico","Brazil","Argentina","Colombia","Peru","Chile",
+        "China","India","Japan","Russia",
+        "United Kingdom","France","Germany","Italy","Spain","Ukraine",
+        "South Korea","North Korea",
+        "Indonesia","Thailand","Vietnam","Philippines","Pakistan","Bangladesh",
+        "Turkey","Saudi Arabia","Iran","Israel","United Arab Emirates",
+        "Egypt","Nigeria","South Africa","Kenya","Morocco","Algeria","Ethiopia",
+        "Australia","New Zealand"
+      ];
+
+      const QUESTION_POOL_INTERMEDIATE = [
+        "Venezuela","Ecuador","Bolivia","Paraguay","Uruguay",
+        "Dominican Republic","Guatemala","Panama","Costa Rica","Honduras",
+        "Portugal","Netherlands","Belgium","Switzerland","Denmark","Ireland",
+        "Austria","Czechia","Greece","Hungary","Romania","Bulgaria","Serbia","Croatia",
+        "Sweden","Norway","Finland","Poland",
+        "Tunisia","Libya","Ghana","Senegal",
+        "Iraq","Syria","Jordan","Oman",
+        "Kazakhstan","Uzbekistan","Mongolia","Sri Lanka"
+      ];
+
+      const QUESTION_POOL_ADVANCED = [
+        "Cuba","Guyana","Suriname",
+        "Slovakia","Bosnia and Herzegovina","North Macedonia","Albania",
+        "Lithuania","Latvia","Estonia","Belarus","Moldova","Iceland",
+        "Sudan","South Sudan","Tanzania",
+        "Angola","Zambia","Zimbabwe","Mali","Niger","Chad","Botswana",
+        "Democratic Republic of the Congo","Republic of the Congo","Gabon","Djibouti",
+        "Cameroon","Central African Republic",
+        "Malawi","Mozambique","Madagascar","Somalia",
+        "Guinea","Sierra Leone","Liberia","Côte d'Ivoire","Benin","Burkina Faso",
+        "Afghanistan","Turkmenistan","Azerbaijan","Armenia","Georgia","Kyrgyzstan","Yemen","Myanmar","Nepal",
+        "Malaysia","Papua New Guinea"
+      ];
+
+      const POOLS = {
+        all: QUESTION_POOL_ALL,
+        beginner: QUESTION_POOL_BEGINNER,
+        intermediate: QUESTION_POOL_INTERMEDIATE,
+        advanced: QUESTION_POOL_ADVANCED
+      };
+
+      /* 日本語名（必要な分は既存のまま） */
+      const JP_NAMES = {
+        "United States of America":"アメリカ合衆国","Canada":"カナダ","Mexico":"メキシコ","Brazil":"ブラジル",
+        "Argentina":"アルゼンチン","Colombia":"コロンビア","Peru":"ペルー","Venezuela":"ベネズエラ","Chile":"チリ",
+        "Bolivia":"ボリビア","Paraguay":"パラグアイ","Uruguay":"ウルグアイ","Cuba":"キューバ","Dominican Republic":"ドミニカ共和国","Guatemala":"グアテマラ",
+        "Russia":"ロシア","France":"フランス","Germany":"ドイツ","Spain":"スペイン","Italy":"イタリア","United Kingdom":"イギリス",
+        "Poland":"ポーランド","Ukraine":"ウクライナ","Sweden":"スウェーデン","Norway":"ノルウェー","Finland":"フィンランド",
+        "Romania":"ルーマニア","Greece":"ギリシャ","Hungary":"ハンガリー","Serbia":"セルビア","Austria":"オーストリア","Czechia":"チェコ","Bulgaria":"ブルガリア",
+        "China":"中国","India":"インド","Japan":"日本","South Korea":"韓国","North Korea":"北朝鮮","Mongolia":"モンゴル",
+        "Pakistan":"パキスタン","Bangladesh":"バングラデシュ","Myanmar":"ミャンマー","Thailand":"タイ","Vietnam":"ベトナム",
+        "Malaysia":"マレーシア","Indonesia":"インドネシア","Philippines":"フィリピン","Australia":"オーストラリア",
+        "Algeria":"アルジェリア","Egypt":"エジプト","Nigeria":"ナイジェリア","Ethiopia":"エチオピア",
+        "Democratic Republic of the Congo":"コンゴ民主共和国","South Africa":"南アフリカ","Tanzania":"タンザニア","Kenya":"ケニア",
+        "Sudan":"スーダン","South Sudan":"南スーダン","Morocco":"モロッコ","Tunisia":"チュニジア","Libya":"リビア",
+        "Angola":"アンゴラ","Zambia":"ザンビア","Zimbabwe":"ジンバブエ","Mali":"マリ","Niger":"ニジェール","Chad":"チャド","Botswana":"ボツワナ",
+        "Turkey":"トルコ","Iran":"イラン","Iraq":"イラク","Saudi Arabia":"サウジアラビア","Syria":"シリア","Israel":"イスラエル",
+        "Jordan":"ヨルダン","Afghanistan":"アフガニスタン","Kazakhstan":"カザフスタン","Uzbekistan":"ウズベキスタン","Turkmenistan":"トルクメニスタン","Azerbaijan":"アゼルバイジャン",
+        "Panama":"パナマ","Costa Rica":"コスタリカ","Honduras":"ホンジュラス","Guyana":"ガイアナ","Suriname":"スリナム","Ecuador":"エクアドル",
+        "Portugal":"ポルトガル","Netherlands":"オランダ","Belgium":"ベルギー","Switzerland":"スイス","Denmark":"デンマーク",
+        "Ireland":"アイルランド","Iceland":"アイスランド","Croatia":"クロアチア","Slovakia":"スロバキア",
+        "Bosnia and Herzegovina":"ボスニア・ヘルツェゴビナ","North Macedonia":"北マケドニア","Albania":"アルバニア",
+        "Lithuania":"リトアニア","Latvia":"ラトビア","Estonia":"エストニア","Belarus":"ベラルーシ","Moldova":"モルドバ",
+        "Ghana":"ガーナ","Senegal":"セネガル","Guinea":"ギニア","Sierra Leone":"シエラレオネ","Liberia":"リベリア",
+        "Côte d'Ivoire":"コートジボワール","Benin":"ベナン","Burkina Faso":"ブルキナファソ",
+        "Cameroon":"カメルーン","Central African Republic":"中央アフリカ共和国",
+        "Republic of the Congo":"コンゴ共和国","Gabon":"ガボン","Djibouti":"ジブチ",
+        "Malawi":"マラウイ","Mozambique":"モザンビーク","Madagascar":"マダガスカル","Somalia":"ソマリア",
+        "United Arab Emirates":"アラブ首長国連邦","Oman":"オマーン","Yemen":"イエメン",
+        "Armenia":"アルメニア","Georgia":"ジョージア","Kyrgyzstan":"キルギス",
+        "Nepal":"ネパール","Sri Lanka":"スリランカ","Papua New Guinea":"パプアニューギニア","New Zealand":"ニュージーランド"
+      };
+
+      const ALIASES = new Map([
+        ["united states", "united states of america"],
+        ["usa", "united states of america"],
+        ["russian federation", "russia"],
+        ["czech republic", "czechia"],
+        ["korea, south", "south korea"],
+        ["republic of korea", "south korea"],
+        ["korea, north", "north korea"],
+        ["dem. rep. congo", "democratic republic of the congo"],
+        ["congo (kinshasa)", "democratic republic of the congo"],
+        ["congo, dem. rep.", "democratic republic of the congo"],
+        ["tanzania, united republic of", "tanzania"],
+        ["iran, islamic republic of", "iran"],
+        ["syrian arab republic", "syria"],
+        ["united republic of tanzania", "tanzania"],
+        ["serbia, republic of", "serbia"],
+        ["republic of serbia", "serbia"],
+        ["cote d’ivoire", "côte d'ivoire"],
+        ["ivory coast", "côte d'ivoire"],
+        ["uae", "united arab emirates"],
+        ["macedonia", "north macedonia"],
+        ["bosnia & herzegovina", "bosnia and herzegovina"],
+        ["bosnia-herzegovina", "bosnia and herzegovina"]
+      ]);
+
+      function normName(s){
+        if (!s) return "";
+        let x = String(s).trim().toLowerCase();
+        x = x.replace(/\s+/g, " ");
+        x = x.replace(/[’'`]/g, "'");
+        x = x.replace(/&/g, "and");
+        x = x.replace(/^the\s+/, "");
+        x = x.replace(/^republic of\s+/, "");
+        x = x.replace(/^united republic of\s+/, "");
+        if (ALIASES.has(x)) x = ALIASES.get(x);
+        return x;
+      }
+
+      function getFeatureName(feature){
+        const p = feature?.properties || {};
+        return p.name || p.ADMIN || p.NAME || p.NAME_EN || p.NAME_LONG || p.SOVEREIGNT || "";
+      }
+
+      /* UI参照 */
+      const elTarget = document.getElementById("target");
+      const elStatus = document.getElementById("status");
+      const elScore  = document.getElementById("score");
+
+      const btnRestart = document.getElementById("btnRestart");
+
+      const btnZoomIn  = document.getElementById("btnZoomIn");
+      const btnZoomOut = document.getElementById("btnZoomOut");
+      const btnUp   = document.getElementById("btnUp");
+      const btnDown = document.getElementById("btnDown");
+      const btnLeft = document.getElementById("btnLeft");
+      const btnRight= document.getElementById("btnRight");
+
+      const startOverlay = document.getElementById("startOverlay");
+      const countOverlay = document.getElementById("countOverlay");
+      const countNum = document.getElementById("countNum");
+
+      const resultOverlay = document.getElementById("resultOverlay");
+      const resultBig = document.getElementById("resultBig");
+      const resultRank = document.getElementById("resultRank");
+      const resultBird = document.getElementById("resultBird");
+      const btnResultClose = document.getElementById("btnResultClose");
+
+      /* 状態 */
+      let selectedMode = "all";
+      let isPractice = false;
+
+      let target = null;
+      let targetNorm = null;
+
+      let questionQueue = [];
+      let correct = 0;
+
+      let timeLeft = getTimeLimit("all");
+      let timerId = null;
+
+      let gameOver = false;
+      let gameStarted = false;
+      let inputLocked = false;
+
+      const layerByNormName = new Map();
+
+      function shuffle(array){
+        for (let i = array.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function setPracticeUI(on){
+        elScore.style.display = on ? "none" : "block";
+      }
+
+      function updateHUD(){
+        if (isPractice) return;
+        elScore.textContent = `正解: ${correct}　残り: ${timeLeft}秒`;
+      }
+
+      /* ===== 総合ランク（今のまま） ===== */
+      function calcRankAll(score){
+        if (score >= 130) return { key:"phoenix", label:"フェニックス" };
+        if (score >= 125) return { key:"thunderbird", label:"サンダーバード" };
+        if (score >= 110) return { key:"gryphonGeneral", label:"グリフォン大将" };
+        if (score >= 90)  return { key:"falconLtGen", label:"ハヤブサ中将" };
+        if (score >= 60)  return { key:"chickenColonel", label:"にわとり大佐" };
+        if (score >= 30)  return { key:"chickSergeant", label:"ひよこ軍曹" };
+        if (score >= 15)  return { key:"eggWarrior", label:"たまご戦士" };
+        return { key:"eggSoldier", label:"たまご兵" };
+      }
+
+      /* ===== モード別ランク（初級/中級/上級） ===== */
+      function calcRankByMode(score, mode){
+        if (mode === "all") return calcRankAll(score);
+
+        if (mode === "beginner" || mode === "intermediate"){
+          if (score >= 30) return { key:"chickenLtGen", label:"にわとり中将" };
+          if (score >= 20) return { key:"chickSergeant", label:"ひよこ軍曹" };
+          if (score >= 10) return { key:"eggWarrior", label:"たまご戦士" };
+          return { key:"eggSoldier", label:"たまご兵" };
+        }
+
+        // advanced
+        if (score >= 40) return { key:"falconColonel", label:"ハヤブサ大佐" };
+        if (score >= 30) return { key:"chickenLtGen", label:"にわとり中将" };
+        if (score >= 20) return { key:"chickSergeant", label:"ひよこ軍曹" };
+        if (score >= 10) return { key:"eggWarrior", label:"たまご戦士" };
+        return { key:"eggSoldier", label:"たまご兵" };
+      }
+
+      /* 結果画面のランク表をモード別に差し替え（総合はそのまま） */
+      function setRankListByMode(mode){
+        const rankList = document.getElementById("rankList");
+        if (!rankList) return;
+
+        if (mode === "all") return; // 総合はHTMLの表そのまま
+
+        if (mode === "beginner" || mode === "intermediate"){
+          rankList.innerHTML = `
+            <div class="rankRow" data-r="eggSoldier"><span>たまご兵</span><span>0〜9点</span></div>
+            <div class="rankRow" data-r="eggWarrior"><span>たまご戦士</span><span>10〜19点</span></div>
+            <div class="rankRow" data-r="chickSergeant"><span>ひよこ軍曹</span><span>20〜29点</span></div>
+            <div class="rankRow" data-r="chickenLtGen"><span>にわとり中将</span><span>30点</span></div>
+          `;
+          return;
+        }
+
+        // advanced
+        rankList.innerHTML = `
+          <div class="rankRow" data-r="eggSoldier"><span>たまご兵</span><span>0〜9点</span></div>
+          <div class="rankRow" data-r="eggWarrior"><span>たまご戦士</span><span>10〜19点</span></div>
+          <div class="rankRow" data-r="chickSergeant"><span>ひよこ軍曹</span><span>20〜29点</span></div>
+          <div class="rankRow" data-r="chickenLtGen"><span>にわとり中将</span><span>30〜39点</span></div>
+          <div class="rankRow" data-r="falconColonel"><span>ハヤブサ大佐</span><span>40点</span></div>
+        `;
       }
 
       function showResult(){
-        const score = correct;
-        const r = calcRank(score);
+        if (isPractice) return;
 
-        resultBig.textContent = `${score}点`;
-        resultRank.textContent = r.label;
+        // ✅ モードに応じてランク表を差し替える
+        setRankListByMode(selectedMode);
+
+        const score = Number(correct) || 0;
+        const r = calcRankByMode(score, selectedMode);
+
+        // 鳥画像（総合の8段は維持。新ランクは適当に割当）
+        const birdByRank = {
+          eggSoldier: "bird1.png",
+          eggWarrior: "bird2.png",
+          chickSergeant: "bird3.png",
+
+          // 総合で使ってた「にわとり大佐」鳥を、中将にも流用
+          chickenColonel: "bird4.png",
+          chickenLtGen: "bird4.png",
+
+          falconLtGen: "bird5.png",
+          falconColonel: "bird5.png",
+
+          gryphonGeneral: "bird6.png",
+          thunderbird: "bird7.png",
+          phoenix: "bird8.png"
+        };
+
+        if (resultBig)  resultBig.textContent  = `${score}点`;
+        if (resultRank) resultRank.textContent = r.label;
+        if (resultBird) resultBird.src = birdByRank[r.key] || "bird1.png";
 
         document.querySelectorAll(".rankRow").forEach(row => {
           row.classList.toggle("active", row.dataset.r === r.key);
         });
 
-        resultOverlay.style.display = "grid";
+        if (resultOverlay) resultOverlay.style.display = "grid";
       }
 
-      btnResultClose.addEventListener("click", () => {
-        resultOverlay.style.display = "none";
-      });
+      if (btnResultClose) {
+        btnResultClose.addEventListener("click", () => {
+          playButtonSound();
+          resultOverlay.style.display = "none";
+        });
+      }
 
-      /* ====== タイマー ====== */
+      /* ===== タイマー ===== */
       function stopTimer(){
         if (timerId !== null){
           clearInterval(timerId);
@@ -506,23 +865,10 @@
         }
       }
 
-      function endGame(message, reason="end"){
-        gameOver = true;
-        stopTimer();
-
-        elTarget.textContent = "⏰ 終了";
-        elStatus.textContent = message || "終了";
-        btnNext.disabled = true;
-
-        if (reason === "timeup"){
-          playTimeUpSound();
-          setTimeout(() => showResult(), 350);
-        }
-      }
-
       function startTimer(){
         stopTimer();
-        timeLeft = TIME_LIMIT;
+
+        timeLeft = getTimeLimit(selectedMode); // ✅ モード別
         updateHUD();
 
         timerId = setInterval(() => {
@@ -530,14 +876,30 @@
 
           timeLeft -= 1;
           if (timeLeft < 0) timeLeft = 0;
-          updateHUD();
 
+          updateHUD();
           if (timeLeft <= 5 && timeLeft > 0) playTick();
           if (timeLeft <= 0) endGame("時間切れ！", "timeup");
         }, 1000);
       }
 
-      /* ====== 地図 ====== */
+      function endGame(message, reason="end"){
+        gameOver = true;
+        stopTimer();
+        stopBGM();
+
+        const danceBird = document.getElementById("danceBird");
+        if (danceBird) danceBird.style.display = "none";
+
+        elTarget.textContent = "⏰ 終了";
+        elStatus.textContent = message || "終了";
+
+        setTimeout(() => showResult(), 350);
+
+        if (reason === "timeup") playTimeUpSound();
+      }
+
+      /* 地図 */
       const map = L.map('map', {
         dragging: false,
         scrollWheelZoom: false,
@@ -558,152 +920,203 @@
       map.keyboard.disable();
       map.getContainer().addEventListener('wheel', e => e.preventDefault(), { passive: false });
 
-      const BASE_STYLE = {
-        color: '#2b2b2b',
-        weight: 0.8,
-        fillColor: '#f1e2c6',
-        fillOpacity: 1
-      };
-      const HOVER_STYLE = {
-        color: '#1a1a1a',
-        weight: 1.7,
-        fillColor: '#ffbf3f', // ✅ デフォルト
-        fillOpacity: 1
-      };
-      const CORRECT_STYLE = {
-        color: '#0b3d1a',
-        weight: 1.9,
-        fillColor: '#2dd36f',
-        fillOpacity: 1
-      };
-      const WRONG_STYLE = {
-        color: '#4a0b0b',
-        weight: 1.7,
-        fillColor: '#ff4d6d',
-        fillOpacity: 1
-      };
+      const BASE_STYLE = { color: '#666666', weight: 0.8, fillColor: '#ffffff', fillOpacity: 1 };
+      const HOVER_STYLE = { color: '#2b2b2b', weight: 1.7, fillColor: '#FFFF00', fillOpacity: 1 };
+      const CORRECT_STYLE = { color: '#0b3d1a', weight: 1.9, fillColor: '#2dd36f', fillOpacity: 1 };
+      const WRONG_STYLE = { color: '#4a0b0b', weight: 1.7, fillColor: '#ff4d6d', fillOpacity: 1 };
 
-      /* 滑らか移動 */
-      btnUp.addEventListener("click",   () => map.panBy([0, -PAN_STEP], PAN_OPTS));
-      btnDown.addEventListener("click", () => map.panBy([0,  PAN_STEP], PAN_OPTS));
-      btnLeft.addEventListener("click", () => map.panBy([-PAN_STEP, 0], PAN_OPTS));
-      btnRight.addEventListener("click",() => map.panBy([ PAN_STEP, 0], PAN_OPTS));
+      btnUp.addEventListener("click",   () => { playButtonSound(); map.panBy([0, -PAN_STEP], PAN_OPTS); });
+      btnDown.addEventListener("click", () => { playButtonSound(); map.panBy([0,  PAN_STEP], PAN_OPTS); });
+      btnLeft.addEventListener("click", () => { playButtonSound(); map.panBy([-PAN_STEP, 0], PAN_OPTS); });
+      btnRight.addEventListener("click",() => { playButtonSound(); map.panBy([ PAN_STEP, 0], PAN_OPTS); });
 
-      /* ズーム2段階（滑らか） */
       let zoomBase = null;
       let zoomUp   = null;
+      let isZoomUp = false;
+      let initialCenter = null;
 
-      function setZoomState(isUp){
+      function setZoomState(isUp, opts = {}){
         if (zoomBase === null || zoomUp === null) return;
-        map.setZoom(isUp ? zoomUp : zoomBase, { animate:true, duration:0.35 });
-        btnZoomIn.disabled  = isUp;
-        btnZoomOut.disabled = !isUp;
-      }
-      btnZoomIn.addEventListener("click",  () => setZoomState(true));
-      btnZoomOut.addEventListener("click", () => setZoomState(false));
 
-      /* ====== ゲーム進行 ====== */
+        isZoomUp = !!isUp;
+        const z = isZoomUp ? zoomUp : zoomBase;
+
+        const animateOpts = { animate:true, duration:0.35 };
+
+        if (opts.toInitial === true && initialCenter){
+          map.setView(initialCenter, z, animateOpts);
+        } else {
+          map.setZoom(z, animateOpts);
+        }
+
+        btnZoomIn.disabled  = isZoomUp;
+        btnZoomOut.disabled = !isZoomUp;
+      }
+
+      btnZoomIn.addEventListener("click",  () => { playButtonSound(); setZoomState(true); });
+      btnZoomOut.addEventListener("click", () => { playButtonSound(); setZoomState(false); });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        if (zoomBase === null || zoomUp === null) return;
+        if (e.repeat) return;
+
+        playButtonSound();
+        const nextUp = !isZoomUp;
+        setZoomState(nextUp, { toInitial: nextUp });
+      });
+
+      /* 点滅 */
+      const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+      async function flashLayer(lyr, flashStyle, times, onMs = FLASH_ON_MS, offMs = FLASH_OFF_MS){
+        if (!lyr) return;
+        for (let i = 0; i < times; i++){
+          lyr.setStyle(flashStyle);
+          await sleep(onMs);
+          lyr.setStyle(BASE_STYLE);
+          await sleep(offMs);
+        }
+      }
+
       function pickNext(){
+        const pool = POOLS[selectedMode] || POOLS.all;
+
+        if (isPractice){
+          const idx = Math.floor(Math.random() * pool.length);
+          target = pool[idx];
+          targetNorm = normName(target);
+          elTarget.textContent = JP_NAMES[target] || target;
+          elStatus.textContent = "（練習）";
+          return;
+        }
+
         if (questionQueue.length === 0){
           endGame("全問終了！おつかれ！", "end");
           return;
         }
+
         target = questionQueue.pop();
         targetNorm = normName(target);
-        answered = false;
         elTarget.textContent = JP_NAMES[target] || target;
         elStatus.textContent = "";
         updateHUD();
       }
 
       function startGame(){
+        // 鳥固定＋練習だけ下げる
+        const danceBird = document.getElementById("danceBird");
+        if (danceBird){
+          danceBird.src = DANCE_BIRD_SRC;
+          danceBird.style.display = "block";
+          danceBird.style.bottom = isPractice ? "100px" : "118px";
+        }
+
         correct = 0;
-        answered = false;
         gameOver = false;
+        inputLocked = false;
 
-        btnNext.disabled = false;
         elStatus.textContent = "";
-        resultOverlay.style.display = "none";
+        if (resultOverlay) resultOverlay.style.display = "none";
 
-        questionQueue = [...QUESTION_POOL];
-        shuffle(questionQueue);
+        setPracticeUI(isPractice);
 
-        startTimer();
+        if (!isPractice){
+          const pool = POOLS[selectedMode] || POOLS.all;
+          questionQueue = [...pool];
+          shuffle(questionQueue);
+        } else {
+          questionQueue = [];
+        }
+
+        startBGM();
+
+        if (!isPractice){
+          startTimer();
+        } else {
+          stopTimer();
+          timeLeft = getTimeLimit(selectedMode);
+        }
+
         pickNext();
       }
 
-      btnNext.addEventListener("click", () => {
-        if (!gameStarted || gameOver) return;
-
-        if (!answered){
-          const lyr = layerByNormName.get(targetNorm);
-          if (lyr) lyr.setStyle(CORRECT_STYLE);
-          setTimeout(() => {
-            if (lyr) lyr.setStyle(BASE_STYLE);
-            pickNext();
-          }, DELAY_SHOW_ANSWER_MS);
-          return;
-        }
-
-        setTimeout(() => pickNext(), DELAY_NEXT_BUTTON_MS);
-      });
-
-      /* ✅ 最初から：START画面に戻る */
       function backToStart(){
+        playButtonSound();
+
         gameOver = true;
         stopTimer();
-        gameStarted = false;
+        stopBGM();
 
-        // 表示を初期っぽく戻す（任意）
+        gameStarted = false;
+        inputLocked = true;
+
+        isPractice = false;
+        setPracticeUI(false);
+
         elTarget.textContent = "---";
         elStatus.textContent = "";
-        timeLeft = TIME_LIMIT;
+        timeLeft = getTimeLimit("all");
         correct = 0;
         updateHUD();
 
-        // 結果画面を閉じる
-        resultOverlay.style.display = "none";
+        const danceBird = document.getElementById("danceBird");
+        if (danceBird) danceBird.style.display = "none";
 
-        // STARTへ
-        startOverlay.style.display = "grid";
+        if (resultOverlay) resultOverlay.style.display = "none";
+        startOverlay.style.display = "flex";
       }
 
-      btnRestart.addEventListener("click", () => {
-        backToStart();
-      });
+      btnRestart.addEventListener("click", backToStart);
 
-      /* START → 3,2,1 */
+      // ✅ 3/2/1 無音、GOだけ音
       async function runCountdown(){
         countOverlay.style.display = "grid";
-        const seq = ["3","2","1"];
-        for (const s of seq){
+        for (const s of ["3","2","1"]){
           countNum.textContent = s;
-          playTone({ type:"sine", freq: 880, duration:0.10, gain:0.25 });
-          await new Promise(r => setTimeout(r, 650));
+          await sleep(650);
         }
         countNum.textContent = "GO!";
         playTone({ type:"sine", freq: 1170, duration:0.12, gain:0.28 });
-        await new Promise(r => setTimeout(r, 350));
+        await sleep(350);
         countOverlay.style.display = "none";
       }
 
-      btnStart.addEventListener("click", async () => {
-        ensureAudio(); // 音の自動再生対策（ユーザー操作で開始）
+      async function startFromMode(mode, practice){
+        playButtonSound();
+        ensureAudio();
+
+        selectedMode = mode;
+        isPractice = !!practice;
+
         startOverlay.style.display = "none";
         gameStarted = true;
+
+        if (isPractice){
+          startGame();
+          return;
+        }
+
+        await sleep(MODE_TO_COUNTDOWN_MS);
         await runCountdown();
         startGame();
+      }
+
+      document.querySelectorAll(".modeBtn, .practiceBtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const mode = btn.dataset.mode;
+          const practice = btn.dataset.practice === "1";
+          startFromMode(mode, practice);
+        });
       });
 
-      /* ====== GeoJSON load ====== */
+      /* ===== GeoJSON ===== */
       fetch('./countries.geojson')
         .then(r => {
           if (!r.ok) throw new Error('countries.geojson が読めない: ' + r.status);
           return r.json();
         })
         .then(data => {
-          let hoveredLayer = null;
-
           const geoLayer = L.geoJSON(data, {
             filter: (feature) => {
               const name = getFeatureName(feature);
@@ -714,43 +1127,54 @@
               const featNorm = normName(getFeatureName(feature));
               layerByNormName.set(featNorm, lyr);
 
-              lyr.on('mouseover', () => {
-                if (hoveredLayer && hoveredLayer !== lyr) hoveredLayer.setStyle(BASE_STYLE);
-                lyr.setStyle(HOVER_STYLE);
-                hoveredLayer = lyr;
-              });
+              lyr.on('mouseover', () => lyr.setStyle(HOVER_STYLE));
+              lyr.on('mouseout',  () => lyr.setStyle(BASE_STYLE));
 
-              lyr.on('mouseout', () => {
-                lyr.setStyle(BASE_STYLE);
-                if (hoveredLayer === lyr) hoveredLayer = null;
-              });
-
-              lyr.on('click', () => {
+              lyr.on('click', async () => {
                 if (!gameStarted || gameOver) return;
                 if (!targetNorm) return;
+                if (inputLocked) return;
+
+                inputLocked = true;
 
                 const isCorrect = (featNorm === targetNorm);
 
                 if (isCorrect){
-                  answered = true;
                   playCorrectSound();
+
+                  if (!isPractice){
+                    correct += 1;
+                    elStatus.textContent = "✅ 正解！";
+                    updateHUD();
+                  } else {
+                    elStatus.textContent = "✅ 正解（練習）";
+                  }
+
                   lyr.setStyle(CORRECT_STYLE);
+                  await sleep(DELAY_AFTER_CORRECT_MS);
+                  lyr.setStyle(BASE_STYLE);
 
-                  correct += 1;
-                  elStatus.textContent = "✅ 正解！";
-                  updateHUD();
-
-                  setTimeout(() => {
-                    lyr.setStyle(BASE_STYLE);
-                    pickNext();
-                  }, DELAY_AFTER_CORRECT_MS);
-
-                } else {
-                  playWrongSound();
-                  elStatus.textContent = "❌ ちがう";
-                  lyr.setStyle(WRONG_STYLE);
-                  setTimeout(() => lyr.setStyle(BASE_STYLE), DELAY_WRONG_FLASH_MS);
+                  pickNext();
+                  inputLocked = false;
+                  return;
                 }
+
+                elStatus.textContent = isPractice ? "❌ ちがう（練習）" : "❌ ちがう";
+                const correctLayer = layerByNormName.get(targetNorm);
+
+                // ✅ 赤1回、緑2回
+                await Promise.all([
+                  flashLayer(lyr, WRONG_STYLE, 1),
+                  flashLayer(correctLayer, CORRECT_STYLE, 2)
+                ]);
+
+                await sleep(AFTER_WRONG_ADVANCE_MS);
+
+                lyr.setStyle(BASE_STYLE);
+                if (correctLayer) correctLayer.setStyle(BASE_STYLE);
+
+                pickNext();
+                inputLocked = false;
               });
             }
           }).addTo(map);
@@ -766,22 +1190,20 @@
           map.setMaxZoom(zoomUp);
           setZoomState(false);
 
+          initialCenter = map.getCenter();
           map.setMaxBounds(bounds);
           map.options.maxBoundsViscosity = 1.0;
 
           // 初期表示
+          timeLeft = getTimeLimit("all");
           updateHUD();
+          setPracticeUI(false);
         })
         .catch(err => {
           alert(err.message);
           console.error(err);
         });
-
     });
   </script>
 </body>
 </html>
-
-
-
-
