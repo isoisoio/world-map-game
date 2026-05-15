@@ -3,11 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>World Map Game</title>
-
+  <title><title>世界地図ゲーム | 無料ブラウザ地理クイズ</title></title>
+<meta name="description" content="世界地図で国名を当てる無料ブラウザゲーム。タイムアタックやスコア挑戦で地理を楽しく学べます。スマホ対応。">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EWCVCT3MZ4"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
 
+gtag('config', 'G-EWCVCT3MZ4');
+</script>
   <style>
     html, body{
       margin: 0;
@@ -473,7 +480,7 @@
       }
 
       const DELAY_AFTER_CORRECT_MS = 220;
-      const FLASH_ON_MS = 250;
+      const FLASH_ON_MS = 300;
       const FLASH_OFF_MS = 70;
       const AFTER_WRONG_ADVANCE_MS = 60;
       const MODE_TO_COUNTDOWN_MS = 180;
@@ -483,7 +490,7 @@
 
       // ✅ baseは -0.63 を維持 / zoomUp = zoomBase + 0.5
       const ZOOM_BASE_ADD = 0.2;
-      const ZOOM_UP_ADD_FROM_BASE = 0.5;
+      const ZOOM_UP_ADD_FROM_BASE = 0.6;
 
       /* ボタン音 */
       const btnSfx = new Audio("ボタン音.mp3");
@@ -902,8 +909,8 @@
       map.keyboard.disable();
       map.getContainer().addEventListener('wheel', e => e.preventDefault(), { passive: false });
 
-      const BASE_STYLE = { color: '#666666', weight: 0.8, fillColor: '#ffffff', fillOpacity: 1 };
-      const HOVER_STYLE = { color: '#2b2b2b', weight: 1., fillColor: '#ffff00', fillOpacity: 1};
+      const BASE_STYLE = { color: '#666666', weight: 0.7,fillColor: '#ffffff', fillOpacity: 1 };
+      const HOVER_STYLE = { color: '#2b2b2b', weight: 1.3, fillColor: '#ffff00', fillOpacity: 1};
       const CORRECT_STYLE = { color: '#0b3d1a', weight: 1.9, fillColor: '#2dd36f', fillOpacity: 1 };
       const WRONG_STYLE = { color: '#4a0b0b', weight: 1.7, fillColor: '#ff4d6d', fillOpacity: 1 };
 
@@ -1143,7 +1150,7 @@
                 const correctLayer = layerByNormName.get(targetNorm);
 
                 await Promise.all([
-                  flashLayer(lyr, WRONG_STYLE, 1),
+                  flashLayer(lyr, WRONG_STYLE, 2),
                   flashLayer(correctLayer, CORRECT_STYLE, 2)
                 ]);
 
